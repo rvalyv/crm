@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load static %}
+{% load form_tags %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-7 col-lg-6">
+      <div class="card shadow border-0">
+        <div class="card-header bg-indigo text-white text-center">
+          <h4 class="mb-0">
+            <i class="fas fa-user-plus me-2"></i>Create Your Account
+          </h4>
+        </div>
+        <div class="card-body px-4 py-5">
+          <form method="post" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger">
+                {{ form.non_field_errors }}
+              </div>
+            {% endif %}
+
+            <!-- Username -->
+            <div class="mb-4">
+              <label for="id_username" class="form-label fw-semibold">Username</label>
+              {{ form.username|add_class:"form-control" }}
+              {% if form.username.errors %}
+                <div class="text-danger small">{{ form.username.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Email -->
+            <div class="mb-4">
+              <label for="id_email" class="form-label fw-semibold">Email</label>
+              {{ form.email|add_class:"form-control" }}
+              {% if form.email.errors %}
+                <div class="text-danger small">{{ form.email.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Role -->
+            <div class="mb-4">
+              <label for="id_role" class="form-label fw-semibold">Role</label>
+              {{ form.role|add_class:"form-select" }}
+            </div>
+
+            <!-- Password 1 -->
+            <div class="mb-4">
+              <label for="id_password1" class="form-label fw-semibold">Password</label>
+              {{ form.password1|add_class:"form-control" }}
+              {% if form.password1.errors %}
+                <div class="text-danger small">{{ form.password1.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Password 2 -->
+            <div class="mb-4">
+              <label for="id_password2" class="form-label fw-semibold">Confirm Password</label>
+              {{ form.password2|add_class:"form-control" }}
+              {% if form.password2.errors %}
+                <div class="text-danger small">{{ form.password2.errors.0 }}</div>
+              {% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-cyan w-100 py-2 fw-semibold">
+              <i class="fas fa-user-plus me-1"></i> Register
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Custom Colors -->
+<style>
+  .bg-indigo {
+    background-color: #6610f2;
+  }
+
+  .btn-cyan {
+    background-color: #0dcaf0;
+    border: none;
+    color: #fff;
+  }
+
+  .btn-cyan:hover {
+    background-color: #0bbcd5;
+    color: #fff;
+  }
+</style>
+{% endblock %}

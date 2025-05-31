@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold text-teal">
+      <i class="fas fa-address-book me-2"></i>
+      {% if user.is_superuser or user.is_staff %}All Leads{% else %}Your Leads{% endif %}
+    </h3>
+    <a href="{% url 'lead-create' %}" class="btn btn-indigo">
+      <i class="fas fa-plus me-1"></i> Add Lead
+    </a>
+  </div>
+
+  <!-- Search -->
+  <form method="get" class="row g-3 mb-3 align-items-center">
+    <div class="col-md-6 position-relative">
+      <input type="text" name="q" class="form-control ps-5" placeholder="Search by name, email..." value="{{ request.GET.q }}">
+      <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn btn-outline-primary"><i class="fas fa-filter"></i> Filter</button>
+    </div>
+  </form>
+
+  <!-- Leads Table -->
+  <div class="table-responsive">
+    <table class="table table-hover align-middle bg-white rounded shadow-sm">
+      <thead class="table-light">
+        <tr class="text-secondary">
+          <th><i class="fas fa-user me-1"></i> Name</th>
+          <th><i class="fas fa-phone me-1"></i> Phone</th>
+          <th><i class="fas fa-envelope me-1"></i> Email</th>
+          <th><i class="fas fa-flag me-1"></i> Status</th>
+          {% if user.is_superuser or user.is_staff %}
+          <th><i class="fas fa-user-cog me-1"></i> Created By</th>
+          {% endif %}
+          <th><i class="fas fa-cogs me-1"></i> Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for lead in leads %}
+        <tr>
+          <td>{{ lead.name }}</td>
+          <td>{{ lead.formatted_phone }}</td>
+          <td>{{ lead.email }}</td>
+          <td>
+            <span class="badge rounded-pill bg-{% if lead.status == 'new' %}warning{% elif lead.status == 'contacted' %}info{% elif lead.status == 'failed' %}danger{% else %}success{% endif %}">
+              <i class="fas fa-{% if lead.status == 'new' %}star{% elif lead.status == 'contacted' %}phone{% elif lead.status == 'failed' %}times{% else %}check{% endif %} me-1"></i>
+              {{ lead.get_status_display }}
+            </span>
+          </td>
+          {% if user.is_superuser or user.is_staff %}
+          <td>{{ lead.created_by.username }}</td>
+          {% endif %}
+          <td class="d-flex gap-2">
+            <a href="{% url 'lead-update' lead.id %}" class="btn btn-sm btn-outline-secondary" title="Edit">
+              <i class="fas fa-edit"></i>
+            </a>
+            {% if lead.notes %}
+            <button class="btn btn-sm btn-outline-info" data-bs-toggle="popover" data-bs-content="{{ lead.notes }}" title="Notes">
+              <i class="fas fa-file-alt"></i>
+            </button>
+            {% endif %}
+            <a href="{% url 'lead-delete' lead.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this lead?');" title="Delete">
+              <i class="fas fa-trash"></i>
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" class="text-center text-muted">No leads found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+  .text-teal {
+    color: #20c997;
+  }
+  .btn-indigo {
+    background-color: #6610f2;
+    color: white;
+  }
+  .btn-indigo:hover {
+    background-color: #520dc2;
+    color: white;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const popoverList = [...document.querySelectorAll('[data-bs-toggle="popover"]')];
+    popoverList.forEach(el => new bootstrap.Popover(el));
+  });
+</script>
+
+{% endblock %}

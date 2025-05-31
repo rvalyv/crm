@@ -1,0 +1,10 @@
+{% extends "admin/base_site.html" %}
+
+{% block content %}
+<h1>Contacts</h1>
+<ul>
+{% for contact in contacts %}
+    <li>{{ contact.name }} - {{ contact.get_status_display }}</li>
+{% endfor %}
+</ul>
+{% endblock %}

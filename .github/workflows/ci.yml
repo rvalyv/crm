@@ -1,0 +1,45 @@
+name: CI
+
+on:
+    push:
+        branches: [ main ]
+    pull_request:
+        branches: [ main ]
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        services:
+            postgres:
+                image: postgres:16
+                env:
+                    POSTGRES_DB: crm
+                    POSTGRES_USER: admin_user
+                    POSTGRES_PASSWORD: 1234
+                ports:
+                    - 5432:5432
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+        env:
+            SECRET_KEY: django-insecure-kg54-@gx$b8-s3%7lrvxvh0y)*fta0$fkx5-#0xnaspwkx)zed
+            DEBUG: True
+            DB_NAME: crm
+            DB_USER: admin_user
+            DB_PASSWORD: 1234
+            DB_HOST: localhost
+            DB_PORT: 5432
+        steps:
+            - uses: actions/checkout@v2
+            - name: Set up Python
+              uses: actions/setup-python@v2
+              with:
+                  python-version: 3.11
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install -r requirements.txt
+            - name: Run tests
+              run: |
+                  python manage.py test

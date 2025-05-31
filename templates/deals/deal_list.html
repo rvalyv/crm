@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-semibold text-muted">
+      <i class="fas fa-briefcase me-2 text-primary"></i>
+      {% if user.is_superuser or user.is_staff %}All Deals{% else %}Your Deals{% endif %}
+    </h3>
+    <a href="{% url 'deal-create' %}" class="btn btn-outline-primary">
+      <i class="fas fa-plus me-1"></i> Add Deal
+    </a>
+  </div>
+
+  <div class="table-responsive shadow-sm rounded">
+    <table class="table table-hover align-middle bg-white">
+      <thead class="table-light text-muted">
+        <tr>
+          <th><i class="fas fa-heading me-1"></i> Title</th>
+          <th><i class="fas fa-dollar-sign me-1"></i> Amount</th>
+          <th><i class="fas fa-coins me-1"></i> Currency</th>
+          <th><i class="fas fa-user me-1"></i> Contact</th>
+          <th><i class="fas fa-circle-notch me-1"></i> Status</th>
+          <th><i class="fas fa-calendar-day me-1"></i> Close Date</th>
+          {% if user.is_superuser or user.is_staff %}
+          <th><i class="fas fa-user-cog me-1"></i> Created By</th>
+          {% endif %}
+          <th><i class="fas fa-cogs me-1"></i> Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for deal in deals %}
+        <tr>
+          <td>{{ deal.title }}</td>
+          <td>{{ deal.amount }}</td>
+          <td>{{ deal.currency }}</td>
+          <td>{{ deal.contact.name }}</td>
+          <td>
+            <span class="badge bg-{{ deal.status|yesno:'warning,success,danger,secondary' }}">
+              {{ deal.get_status_display }}
+            </span>
+          </td>
+          <td>{{ deal.close_date|date:"d M Y" }}</td>
+          {% if user.is_superuser or user.is_staff %}
+          <td>{{ deal.created_by.username }}</td>
+          {% endif %}
+          <td>
+            <a href="{% url 'deal-update' deal.id %}" class="btn btn-sm btn-outline-secondary">
+              <i class="fas fa-edit"></i>
+            </a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="8" class="text-center text-muted py-4">No deals found.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+  .table th, .table td {
+    vertical-align: middle;
+  }
+
+  .badge.bg-warning { background-color: #f6c23e !important; }
+  .badge.bg-success { background-color: #1cc88a !important; }
+  .badge.bg-danger  { background-color: #e74a3b !important; }
+</style>
+{% endblock %}
