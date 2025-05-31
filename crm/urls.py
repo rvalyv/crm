@@ -1,9 +1,11 @@
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from contacts import views as contact_views
 from accounts.views import RegisterView, LogoutView, user_list
 from contacts.views import DashboardView
+from crm import settings
 from deal.views import DealViewSet
 from tasks.views import TaskViewSet
 from rest_framework.routers import DefaultRouter
@@ -37,3 +39,6 @@ urlpatterns = [
     path('tasks/', include('tasks.urls')),
     path('deals/', include('deal.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=os.path.join(settings.BASE_DIR, 'static'))
